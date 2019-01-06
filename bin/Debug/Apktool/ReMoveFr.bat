@@ -1,0 +1,1 @@
+apktool empty-framework-dir --force
