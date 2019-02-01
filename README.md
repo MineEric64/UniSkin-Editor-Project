@@ -13,3 +13,10 @@ If you want to use UniSkin Editor's Test Version, You must get permission to me.
 
 Latest Version: V1.2.2.0
 Test Version: V1.2.2.1
+
+My All Programs use .NET Framework 4.6.2!
+They have the comments each Code. So, You can know about Codes easily! :D
+
+DEVELOPING PROJECTS make one convenient. -MineEric64
+
+-By 2019-02-02 & 최에릭 (MineEric64)
