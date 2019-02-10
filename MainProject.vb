@@ -22,12 +22,12 @@ Public Class MainProject
         Dim Client As New WebClient
         Dim vFile = Application.StartupPath + "\Data\version.ini"
         Dim sFile = Application.StartupPath + "\settings.ini"
-        Dim CheckUpdate As String = ReadIni(sFile, "USKESettings", "CheckUpdate", "")
+        Dim ChkUpdate As String = ReadIni(sFile, "USKESettings", "CheckUpdate", "")
         Dim FileInfo As String = ReadIni(vFile, "Version", "version", "")
 
         Try
             '중복 실행 방지
-            If UBound(Diagnostics.Process.GetProcessesByName(Diagnostics.Process.GetCurrentProcess.ProcessName)) > 0 Then '만약 중복실행이 되고 있다면
+            If UBound(Process.GetProcessesByName(Process.GetCurrentProcess.ProcessName)) > 0 Then '만약 중복실행이 되고 있다면
                 MsgBox("UniSkin Editor is Already Running :(" & vbNewLine & "Try Restart UniSkin Editor!", MsgBoxStyle.Exclamation + MsgBoxStyle.OkOnly, Me.Text) '중복실행 메시지박스 표시
                 End
             End If
@@ -57,56 +57,7 @@ Public Class MainProject
                 MessageBox.Show("Error Code: Unknown" & vbNewLine & "Warning: " & ex.Message, "UniSkin Editor: Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
 
-            'ini 설정 읽기
-            If (My.Computer.Network.IsAvailable = True) Then '만약 네트워크가 연결 되있다면
-                If CheckUpdate = "True" Then '만약 CheckUpdate 의 값이 "True" 라면
-                    If My.Application.Info.Version.ToString < FileInfo Then '만약 어셈블리 버전보다 FileInfo 가 더 크면
-                        If MessageBox.Show("New Version " & FileInfo & " is Available! You can Update later for (About> Check Update)." & vbNewLine & vbNewLine & "Current Version : " & My.Application.Info.Version.ToString & vbNewLine & "Latest Version : " & FileInfo, "UniSkin Editor", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-                            ProgramUpdate.DLabel1.Left = 101
-                            ProgramUpdate.DLabel1.Top = 108
-                            ProgramUpdate.DLabel1.Text = "Downloading UniSkin Editor " & FileInfo & " ..."
-                            ProgramUpdate.DProgress1.Value = 800
-                            ProgramUpdate.Show()
-                            ProgramUpdate.DProgress1.MarqueeAnimationSpeed = 100
-                            Client.DownloadFile("http://download.uniske.kro.kr", "Update.zip") 'Update.zip 으로 다운로드
-                            If Dir("UniSkin Editor_v" & FileInfo, vbDirectory) <> "" Then
-                                If IO.File.Exists("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") Then
-                                    My.Computer.FileSystem.DeleteDirectory("UniSkin Editor_v" & FileInfo, FileIO.DeleteDirectoryOption.DeleteAllContents)
-                                    My.Computer.FileSystem.CreateDirectory("UniSkin Editor_v" & FileInfo)
-                                    ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)  'Zip 파일을 압축 풀기
-                                Else
-                                    ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)
-                                End If
-                            Else
-                                My.Computer.FileSystem.CreateDirectory("UniSkin Editor_v" & FileInfo)
-                                ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)
-                            End If
-                            Threading.Thread.Sleep(3000)  '3초 대기
-                            ProgramUpdate.DProgress1.Value = 1000
-                            If ProgramUpdate.DProgress1.Value = 1000 Then
-                                ProgramUpdate.DLabel1.Left = 151
-                                ProgramUpdate.DLabel1.Top = 108
-                                ProgramUpdate.DLabel1.Text = "Update Complete!"
-                                If MsgBox("Update Complete! UniSkin Editor " & FileInfo & " is in [UniSkin Editor_v" & FileInfo & "] Folder.", vbInformation) = vbOK Then
-                                    IO.File.Delete("Update.zip") 'Update.zip 파일 삭제
-                                    ProgramUpdate.Close() 'Update 끝!
-                                End If
-                            End If
-                            If ReadIni(sFile, "USKESettings", "LatestVer", "") = "True" Then
-                                If IO.File.Exists("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") Then
-                                    Process.Start("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") '업데이트 한 유니스킨 에디터 실행.
-                                    End '프로세스 종료.
-                                Else
-                                    'UniSkin Editor.exe 가 없을 때 발생하는 오류.
-                                    MessageBox.Show("Error Code: 9" & vbNewLine & "Warning: UniSkin Editor Can't Run Latest Version UniSkin Editor. UniSkin Editor don't exist!", "UniSkin Editor: Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            Else
-                MsgBox("Network Connect Failed! Can't Check For Updates.", vbCritical)
-            End If
+            CheckUpdate()
 
             If (My.Computer.Network.IsAvailable = True) Then '만약 네트워크가 연결 되있다면
                 Client.DownloadFile("http://downini.uniske.kro.kr", "Data\version.ini") 'Data\version.ini 파일로 다운로드
@@ -809,7 +760,7 @@ VersionLine:
             GoTo VersionLine
         End If
 
-        'UniSkin Text Color 저장 (Find & Replace 저장, 색깔 Find & Replace 가 어려워서 오류가 많음)
+        'UniSkin Text Color 저장 (Converting Color To HTML)
 #Region "Colors_Setting"
         Dim curFile As String = "WorkSpace\values\colors.xml" 'File 경로
         Dim WhCol As String = "#ffffffff" '하얀 색깔
@@ -819,246 +770,10 @@ ColorsLine:
             Try
                 IO.File.Copy("Data\EditSamples\values\colors.xml", curFile, True) '덮어쓰기 허용이라 이젠 File.Exists 문 안해도 된다.
 
-                '여기서 부턴 엄청 복잡하니까 코드 수정 외에는 만지지 말자.
-                If infoCol1.SelectedColor = Color.White Then '[White Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffffff"))
-                End If
+                Dim SCol As Color = infoCol1.SelectedColor
+                Dim ColARGB As String = "#" + SCol.A.ToString("X2") + SCol.R.ToString("X2") + SCol.G.ToString("X2") + SCol.B.ToString("X2")
 
-                If infoCol1.SelectedColor = Color.Transparent Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffffff")) '원래 투명색은 없지만 지금은 예외 이므로 하얀색으로 처리.
-                End If
-
-                If infoCol1.SelectedColor = Color.Black Then '[Black Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff000000"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DimGray Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff696969"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Gray Then '[Gray Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff808080"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DarkGray Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffa9a9a9"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Silver Then '[Silver Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffc0c0c0"))
-                End If
-
-                If infoCol1.SelectedColor = Color.LightGray Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffd3d3d3"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Gainsboro Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffdcdcdc"))
-                End If
-
-                If infoCol1.SelectedColor = Color.WhiteSmoke Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fff5f5f5"))
-                End If
-
-                If infoCol1.SelectedColor = Color.RosyBrown Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffbc8f8f"))
-                End If
-
-                If infoCol1.SelectedColor = Color.IndianRed Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffcf5c5c"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Brown Then '[Brown Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffa52a2a"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Firebrick Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffb22222"))
-                End If
-
-                If infoCol1.SelectedColor = Color.LightCoral Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fff08080"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Maroon Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff800000"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DarkRed Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff8b0000"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Red Then '[Red Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffff0000"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Snow Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffffafa"))
-                End If
-
-                If infoCol1.SelectedColor = Color.MistyRose Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffe4e1"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Salmon Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffa8072"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Tomato Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffff6347"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DarkSalmon Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffe9967a"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Coral Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffff7f50"))
-                End If
-
-                If infoCol1.SelectedColor = Color.OrangeRed Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffff4500"))
-                End If
-
-                If infoCol1.SelectedColor = Color.LightSalmon Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffa07a"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Sienna Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffa0522d"))
-                End If
-
-                If infoCol1.SelectedColor = Color.SeaShell Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffff5ee"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Chocolate Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffd2691e"))
-                End If
-
-                If infoCol1.SelectedColor = Color.SaddleBrown Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff8b4513"))
-                End If
-
-                If infoCol1.SelectedColor = Color.SandyBrown Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fff4a460"))
-                End If
-
-                If infoCol1.SelectedColor = Color.PeachPuff Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffdab9"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Peru Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffcd853f"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Linen Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffaf0e6"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Bisque Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffe4c4"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DarkOrange Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffff8c00"))
-                End If
-
-                If infoCol1.SelectedColor = Color.BurlyWood Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffdeb887"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Tan Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffd2b48c"))
-                End If
-
-                If infoCol1.SelectedColor = Color.AntiqueWhite Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffaebd7"))
-                End If
-
-                If infoCol1.SelectedColor = Color.NavajoWhite Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffdead"))
-                End If
-
-                If infoCol1.SelectedColor = Color.BlanchedAlmond Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffebcd"))
-                End If
-
-                If infoCol1.SelectedColor = Color.PapayaWhip Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffe5d5"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Moccasin Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffe4b5"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Orange Then '[Orange Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffa500"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Wheat Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fff5deb3"))
-                End If
-
-                If infoCol1.SelectedColor = Color.OldLace Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffdf5e6"))
-                End If
-
-                If infoCol1.SelectedColor = Color.FloralWhite Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffffaf0"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DarkGoldenrod Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffb8860b"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Cornsilk Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffff8dc"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Gold Then '[Gold Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffd700"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Khaki Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fff8e68c"))
-                End If
-
-                If infoCol1.SelectedColor = Color.LemonChiffon Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffffacd"))
-                End If
-
-                If infoCol1.SelectedColor = Color.PaleGoldenrod Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffeee8aa"))
-                End If
-
-                If infoCol1.SelectedColor = Color.DarkKhaki Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffbdb76b"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Beige Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fff5f5dc"))
-                End If
-
-                If infoCol1.SelectedColor = Color.LightGoldenrodYellow Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffafad2"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Olive Then '[Olive Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ff808000"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Yellow Then '[Yellow Color]'
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffff00"))
-                End If
-
-                If infoCol1.SelectedColor = Color.LightYellow Then '[LightYellow Color]
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#ffffffe0"))
-                End If
-
-                If infoCol1.SelectedColor = Color.Ivory Then
-                    IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, "#fffffff0"))
-                End If
+                IO.File.WriteAllText(curFile, IO.File.ReadAllText(curFile).Replace(WhCol, ColARGB))
 
             Catch ex As Exception '예외 오류 잡기
                 MessageBox.Show("Error Code: Unknown" & vbNewLine & "Warning: " & ex.Message, "UniSkin Editor: Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -1129,60 +844,10 @@ NullLine: 'Catch ex As Execption 중 방지하기 위해 Line 생성
         Dim Client As New WebClient
         Dim vFile = Application.StartupPath + "\Data\version.ini"
         Dim sFile = Application.StartupPath + "\settings.ini"
-        Dim CheckUpdate As String = ReadIni(sFile, "USKESettings", "CheckUpdate", "")
+        Dim ChkUpdate As String = ReadIni(sFile, "USKESettings", "CheckUpdate", "")
         Dim FileInfo As String = ReadIni(vFile, "Version", "version", "")
 
-        '업데이트 코드
-        If (My.Computer.Network.IsAvailable = True) Then '만약 네트워크가 연결 되있다면
-            Client.DownloadFile("http://downini.uniske.kro.kr", "Data\version.ini") 'Data\version.ini 파일로 다운로드
-            If My.Application.Info.Version.ToString < FileInfo Then '만약 어셈블리 버전보다 FileInfo 가 더 크면
-                If MessageBox.Show("New Version " & FileInfo & " is Available! Do You want to Update UniSkin Editor " & FileInfo & " ?" & vbNewLine & vbNewLine &
-                                   "Current Version : " & My.Application.Info.Version.ToString & vbNewLine & "Latest Version : " & FileInfo,
-                                   "UniSkin Editor", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-                    ProgramUpdate.DLabel1.Left = 101
-                    ProgramUpdate.DLabel1.Top = 108
-                    ProgramUpdate.DLabel1.Text = "Downloading UniSkin Editor " & FileInfo & " ..."
-                    ProgramUpdate.DProgress1.Value = 800
-                    ProgramUpdate.Show()
-                    ProgramUpdate.DProgress1.MarqueeAnimationSpeed = 100
-                    Client.DownloadFile("http://download.uniske.kro.kr", "Update.zip") 'Update.zip 으로 다운로드
-                    If Dir("UniSkin Editor_v" & FileInfo, vbDirectory) <> "" Then
-                        If IO.File.Exists("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") Then
-                            My.Computer.FileSystem.DeleteDirectory("UniSkin Editor_v" & FileInfo, FileIO.DeleteDirectoryOption.DeleteAllContents)
-                            My.Computer.FileSystem.CreateDirectory("UniSkin Editor_v" & FileInfo)
-                            ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)  'Zip 파일을 압축 풀기
-                        Else
-                            ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)
-                        End If
-                    Else
-                        My.Computer.FileSystem.CreateDirectory("UniSkin Editor_v" & FileInfo)
-                        ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)
-                    End If
-                    Threading.Thread.Sleep(3000)  '3초 대기
-                    ProgramUpdate.DProgress1.Value = 1000
-                    If ProgramUpdate.DProgress1.Value = 1000 Then
-                        ProgramUpdate.DLabel1.Left = 151
-                        ProgramUpdate.DLabel1.Top = 108
-                        ProgramUpdate.DLabel1.Text = "Update Complete!"
-                        If MsgBox("Update Complete! UniSkin Editor " & FileInfo & " is in [UniSkin Editor_v" & FileInfo & "] Folder.", vbInformation) = vbOK Then
-                            IO.File.Delete("Update.zip") 'Update.zip 파일 삭제
-                            ProgramUpdate.Close()
-                        End If
-                    End If
-                    If ReadIni(sFile, "USKESettings", "LatestVer", "") = "True" Then
-                        If IO.File.Exists("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") Then
-                            Process.Start("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") '업데이트 한 유니스킨 에디터 실행.
-                            End '프로세스 종료.
-                        Else
-                            'UniSkin Editor.exe 가 없을 때 발생하는 오류.
-                            MessageBox.Show("Error Code: 9" & vbNewLine & "Warning: UniSkin Editor Can't Run Latest Version UniSkin Editor. UniSkin Editor doesn't exist!", "UniSkin Editor: Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                        End If
-                    End If
-                End If
-            End If
-        Else
-            MsgBox("Network Connect Failed! Can't Check For Updates.", vbCritical)
-        End If
+        CheckUpdate()
 
         '최신버전 사용 코드
         If (My.Computer.Network.IsAvailable = True) Then '만약 네트워크가 연결 되있다면
@@ -1286,6 +951,64 @@ ImageSetLine:
     Private Sub CleanTheTempoaryFilesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CleanTheTempoaryFilesToolStripMenuItem.Click
         If MessageBox.Show("Do you want to clean the Tempoary Files?", "UniSkin Editor", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) = DialogResult.Yes Then
             CleanFiles.Show()
+        End If
+    End Sub
+
+    Private Sub CheckUpdate()
+        Dim Client As New WebClient
+        Dim vFile = Application.StartupPath + "\Data\version.ini"
+        Dim sFile = Application.StartupPath + "\settings.ini"
+        Dim ChkUpdate As String = ReadIni(sFile, "USKESettings", "CheckUpdate", "")
+        Dim FileInfo As String = ReadIni(vFile, "Version", "version", "")
+
+        If (My.Computer.Network.IsAvailable = True) Then '만약 네트워크가 연결 되있다면
+            If ChkUpdate = "True" Then '만약 CheckUpdate 의 값이 "True" 라면
+                If My.Application.Info.Version.ToString < FileInfo Then '만약 어셈블리 버전보다 FileInfo 가 더 크면
+                    If MessageBox.Show("New Version " & FileInfo & " is Available! You can Update later for (About> Check Update)." & vbNewLine & vbNewLine & "Current Version : " & My.Application.Info.Version.ToString & vbNewLine & "Latest Version : " & FileInfo, "UniSkin Editor", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                        ProgramUpdate.DLabel1.Left = 101
+                        ProgramUpdate.DLabel1.Top = 108
+                        ProgramUpdate.DLabel1.Text = "Downloading UniSkin Editor " & FileInfo & " ..."
+                        ProgramUpdate.DProgress1.Value = 800
+                        ProgramUpdate.Show()
+                        ProgramUpdate.DProgress1.MarqueeAnimationSpeed = 100
+                        Client.DownloadFile("http://download.uniske.kro.kr", "Update.zip") 'Update.zip 으로 다운로드
+                        If Dir("UniSkin Editor_v" & FileInfo, vbDirectory) <> "" Then
+                            If IO.File.Exists("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") Then
+                                My.Computer.FileSystem.DeleteDirectory("UniSkin Editor_v" & FileInfo, FileIO.DeleteDirectoryOption.DeleteAllContents)
+                                My.Computer.FileSystem.CreateDirectory("UniSkin Editor_v" & FileInfo)
+                                ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)  'Zip 파일을 압축 풀기
+                            Else
+                                ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)
+                            End If
+                        Else
+                            My.Computer.FileSystem.CreateDirectory("UniSkin Editor_v" & FileInfo)
+                            ZipFile.ExtractToDirectory("Update.zip", "UniSkin Editor_v" & FileInfo)
+                        End If
+                        Threading.Thread.Sleep(3000)  '3초 대기
+                        ProgramUpdate.DProgress1.Value = 1000
+                        If ProgramUpdate.DProgress1.Value = 1000 Then
+                            ProgramUpdate.DLabel1.Left = 151
+                            ProgramUpdate.DLabel1.Top = 108
+                            ProgramUpdate.DLabel1.Text = "Update Complete!"
+                            If MsgBox("Update Complete! UniSkin Editor " & FileInfo & " is in [UniSkin Editor_v" & FileInfo & "] Folder.", vbInformation) = vbOK Then
+                                IO.File.Delete("Update.zip") 'Update.zip 파일 삭제
+                                ProgramUpdate.Close() 'Update 끝!
+                            End If
+                        End If
+                        If ReadIni(sFile, "USKESettings", "LatestVer", "") = "True" Then
+                            If IO.File.Exists("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") Then
+                                Process.Start("UniSkin Editor_v" & FileInfo & "\UniSkin Editor.exe") '업데이트 한 유니스킨 에디터 실행.
+                                End '프로세스 종료.
+                            Else
+                                'UniSkin Editor.exe 가 없을 때 발생하는 오류.
+                                MessageBox.Show("Error Code: 9" & vbNewLine & "Warning: UniSkin Editor Can't Run Latest Version UniSkin Editor. UniSkin Editor don't exist!", "UniSkin Editor: Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+        Else
+            MsgBox("Network Connect Failed! Can't Check For Updates.", vbCritical)
         End If
     End Sub
 End Class

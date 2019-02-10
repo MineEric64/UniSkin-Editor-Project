@@ -2,7 +2,6 @@ C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniS
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\bin\Debug\UniSkin Editor.exe
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\bin\Debug\UniSkin Editor.pdb
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\bin\Debug\UniSkin Editor.xml
-C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Project.vbprojResolveAssemblyReference.cache
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\Interop.WinHttp.dll
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Project.vbproj.ResolveComReference.cache
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin_Project.CleanFiles.resources
@@ -20,3 +19,5 @@ C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniS
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Editor.exe
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Editor.xml
 C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Editor.pdb
+C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Project.vbprojAssemblyReference.cache
+C:\Users\SAMSUNG\documents\visual studio 2017\Projects\UniConverter Project\UniSkin Project\obj\Debug\UniSkin Project.vbproj.CopyComplete

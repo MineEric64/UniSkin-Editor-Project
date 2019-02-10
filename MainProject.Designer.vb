@@ -32,6 +32,7 @@ Partial Class MainProject
         Me.InstallFrameWorkToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RemoveFrameWorkToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ResetImagesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CleanTheTempoaryFilesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TutorialsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -53,7 +54,6 @@ Partial Class MainProject
         Me.ImportAppIcon1 = New System.Windows.Forms.Button()
         Me.TextFileName1 = New System.Windows.Forms.TextBox()
         Me.Info = New System.Windows.Forms.TabPage()
-        Me.Tip3 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.infoTB3 = New System.Windows.Forms.TextBox()
         Me.XMLTextBox1 = New System.Windows.Forms.TextBox()
@@ -73,7 +73,6 @@ Partial Class MainProject
         Me.ofdEdit = New System.Windows.Forms.OpenFileDialog()
         Me.colorPick = New System.Windows.Forms.ColorDialog()
         Me.infoCol1 = New UniSkin_Project.mkc_ColorCombobox()
-        Me.CleanTheTempoaryFilesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu.SuspendLayout()
         Me.EControl.SuspendLayout()
         Me.Images.SuspendLayout()
@@ -140,6 +139,12 @@ Partial Class MainProject
         Me.ResetImagesToolStripMenuItem.Name = "ResetImagesToolStripMenuItem"
         Me.ResetImagesToolStripMenuItem.Size = New System.Drawing.Size(209, 22)
         Me.ResetImagesToolStripMenuItem.Text = "Reset Images"
+        '
+        'CleanTheTempoaryFilesToolStripMenuItem
+        '
+        Me.CleanTheTempoaryFilesToolStripMenuItem.Name = "CleanTheTempoaryFilesToolStripMenuItem"
+        Me.CleanTheTempoaryFilesToolStripMenuItem.Size = New System.Drawing.Size(209, 22)
+        Me.CleanTheTempoaryFilesToolStripMenuItem.Text = "Clean the Tempoary Files"
         '
         'TutorialsToolStripMenuItem
         '
@@ -307,7 +312,6 @@ Partial Class MainProject
         '
         'Info
         '
-        Me.Info.Controls.Add(Me.Tip3)
         Me.Info.Controls.Add(Me.Label1)
         Me.Info.Controls.Add(Me.infoTB3)
         Me.Info.Controls.Add(Me.XMLTextBox1)
@@ -332,15 +336,6 @@ Partial Class MainProject
         Me.Info.TabIndex = 1
         Me.Info.Text = "Info"
         Me.Info.UseVisualStyleBackColor = True
-        '
-        'Tip3
-        '
-        Me.Tip3.AutoSize = True
-        Me.Tip3.Location = New System.Drawing.Point(160, 363)
-        Me.Tip3.Name = "Tip3"
-        Me.Tip3.Size = New System.Drawing.Size(158, 12)
-        Me.Tip3.TabIndex = 34
-        Me.Tip3.Text = "Tip: This feature is in beta."
         '
         'Label1
         '
@@ -506,12 +501,6 @@ Partial Class MainProject
         Me.infoCol1.Size = New System.Drawing.Size(236, 24)
         Me.infoCol1.TabIndex = 33
         '
-        'CleanTheTempoaryFilesToolStripMenuItem
-        '
-        Me.CleanTheTempoaryFilesToolStripMenuItem.Name = "CleanTheTempoaryFilesToolStripMenuItem"
-        Me.CleanTheTempoaryFilesToolStripMenuItem.Size = New System.Drawing.Size(209, 22)
-        Me.CleanTheTempoaryFilesToolStripMenuItem.Text = "Clean the Tempoary Files"
-        '
         'MainProject
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
@@ -587,6 +576,5 @@ Partial Class MainProject
     Friend WithEvents colorPick As ColorDialog
     Friend WithEvents Label1 As Label
     Friend WithEvents infoCol1 As mkc_ColorCombobox
-    Friend WithEvents Tip3 As Label
     Friend WithEvents CleanTheTempoaryFilesToolStripMenuItem As ToolStripMenuItem
 End Class

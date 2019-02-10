@@ -1,4 +1,2 @@
-﻿Imports System.Net
-Public Class ProgramUpdate
-
+﻿Public Class ProgramUpdate
 End Class
