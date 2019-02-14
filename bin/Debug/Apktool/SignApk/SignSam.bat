@@ -1,1 +1,0 @@
-java -jar signapk.jar certificate.pem key.pk8 "unisample.apk" "UniSkin.apk"

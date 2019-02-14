@@ -1,1 +1,0 @@
-apktool d -o unism unisample.apk -f
