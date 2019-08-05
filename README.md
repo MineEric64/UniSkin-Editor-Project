@@ -7,19 +7,19 @@
 ### UniSkin Editor for UniPad.
 ### Made By 'MineEric64'. (최에릭)
 
-## About The 'UniSkin Editor'
+## Notice
+
+### Project Closed. Because UniPad updates rarely. Also, UniSkin Editor v1.2.2.1 supported to make a UniSkin, or apply the UniSkin prefectly.
+### So I decided to close the project named UniSkin Editor. Thank you for using UniSkin Editor!
+
+## Instruction
 
 UniSkin Editor edit the UniSkins. You can make UniSkin and edit UniSkin!
 Even, UniSkin Editor supports editing Top LED Lights & Chains & Buttons & Bars & App's INFO (App Name, App Description, App Icon)!
 
-You can download UniSkin Editor Latest Version on "http://www.uniske.kro.kr".
+You can download UniSkin Editor Latest Version on [UniSkin Editor Official Site](http://uniske.kro.kr).
 If you want to use UniSkin Editor's Test Version, You must get permission to me. or, You can build the UniConverter directly!
-
-Latest Version: V1.2.2.1
-Test Version: V1.2.2.2
-
-My All Programs use .NET Framework 4.6.2!
-They have the comments each Code. So, You can know about Codes easily! :D
+#### [ Latest Version: V1.2.2.1   |   Test Version: V1.2.2.2 ]
 
 ##### DEVELOPING PROJECTS make someone convenient.
 #### By MineEric64 (최에릭) on 07/27/19
