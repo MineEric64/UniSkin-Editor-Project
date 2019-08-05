@@ -9,8 +9,9 @@
 
 ## Notice
 
-### Project Closed. Because UniPad updates rarely. Also, UniSkin Editor v1.2.2.1 supported to make a UniSkin, or apply the UniSkin prefectly.
-### So I decided to close the project named UniSkin Editor. Thank you for using UniSkin Editor!
+### Project Closed. 
+#### Because UniPad updates rarely. Also, UniSkin Editor v1.2.2.1 supported to make a UniSkin, or apply the UniSkin prefectly.
+#### So I decided to close the project named UniSkin Editor. Thank you for using UniSkin Editor!
 
 ## Instruction
 
